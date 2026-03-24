@@ -49,6 +49,15 @@ export interface QuickPreset {
   type: TransactionType;
 }
 
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string; // ISO string
+  createdAt: string; // ISO string
+}
+
 export const EXPENSE_CATEGORIES: Category[] = [
   'Food',
   'Transport',

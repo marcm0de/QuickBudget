@@ -6,10 +6,10 @@ import { TrendLineChart } from '@/components/Charts';
 import { formatCurrency, getMonthTransactions, getMonthlyIncome, getMonthlyExpenses, getCategorySpending } from '@/lib/utils';
 import { CATEGORY_COLORS, Category } from '@/lib/types';
 import { subMonths, format, parseISO, getDaysInMonth } from 'date-fns';
-import { TrendingUp, TrendingDown, Calendar, DollarSign, Trophy } from 'lucide-react';
+import { TrendingUp, TrendingDown, Calendar, DollarSign, Trophy, RefreshCw, Target } from 'lucide-react';
 
 export default function InsightsPage() {
-  const { transactions, currency } = useBudgetStore();
+  const { transactions, currency, recurringBills, savingsGoals } = useBudgetStore();
 
   const now = new Date();
   const currentMonth = getMonthTransactions(transactions, now);
@@ -125,6 +125,92 @@ export default function InsightsPage() {
         <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200 mb-3">Income vs Expenses Trend</h3>
         <TrendLineChart data={trendData} />
       </div>
+
+      {/* Recurring Bills Monthly Impact */}
+      {recurringBills.length > 0 && (
+        <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <RefreshCw size={14} className="text-orange-500" />
+            <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200">Recurring Bills Impact</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <p className="text-xs text-stone-400">Monthly Recurring</p>
+              <p className="text-lg font-bold text-red-500">
+                {formatCurrency(
+                  recurringBills.reduce((sum, bill) => {
+                    if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+                    if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+                    return sum + bill.amount;
+                  }, 0),
+                  currency
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-stone-400">% of Expenses</p>
+              <p className="text-lg font-bold text-stone-800 dark:text-stone-100">
+                {currentExpenses > 0
+                  ? `${Math.round(
+                      (recurringBills.reduce((sum, bill) => {
+                        if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+                        if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+                        return sum + bill.amount;
+                      }, 0) /
+                        currentExpenses) *
+                        100
+                    )}%`
+                  : '—'}
+              </p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {recurringBills.slice(0, 5).map((bill) => (
+              <div key={bill.id} className="flex items-center justify-between text-sm">
+                <span className="text-stone-600 dark:text-stone-300">{bill.name}</span>
+                <span className="text-stone-500 dark:text-stone-400 font-medium">
+                  {formatCurrency(bill.amount, currency)}/{bill.frequency === 'monthly' ? 'mo' : bill.frequency === 'weekly' ? 'wk' : 'yr'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Savings Goals Progress */}
+      {savingsGoals.length > 0 && (
+        <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <Target size={14} className="text-emerald-500" />
+            <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200">Savings Goals</h3>
+          </div>
+          <div className="space-y-3">
+            {savingsGoals.map((goal) => {
+              const progress = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
+              return (
+                <div key={goal.id}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm text-stone-700 dark:text-stone-200">{goal.name}</span>
+                    <span className="text-xs text-stone-400">
+                      {formatCurrency(goal.currentAmount, currency)} / {formatCurrency(goal.targetAmount, currency)}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.min(progress, 100)}%`,
+                        backgroundColor: progress >= 100 ? '#22c55e' : '#3b82f6',
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-stone-400 mt-0.5">{Math.round(progress)}% complete</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Top spending categories */}
       <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">

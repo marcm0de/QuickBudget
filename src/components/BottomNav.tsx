@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Receipt, PiggyBank, RefreshCw, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Receipt, PiggyBank, RefreshCw, BarChart3, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/transactions', icon: Receipt, label: 'Txns' },
   { href: '/budgets', icon: PiggyBank, label: 'Budgets' },
   { href: '/recurring', icon: RefreshCw, label: 'Bills' },
+  { href: '/savings', icon: Target, label: 'Goals' },
   { href: '/insights', icon: BarChart3, label: 'Insights' },
 ];
 

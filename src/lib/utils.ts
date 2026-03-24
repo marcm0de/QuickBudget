@@ -71,3 +71,85 @@ export function downloadCSV(csv: string, filename: string = 'quickbudget-export.
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+export function parseCSV(csvText: string): Omit<Transaction, 'id'>[] {
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  const header = lines[0].toLowerCase();
+  const hasHeader = header.includes('date') || header.includes('amount') || header.includes('type');
+  const dataLines = hasHeader ? lines.slice(1) : lines;
+
+  const results: Omit<Transaction, 'id'>[] = [];
+
+  for (const line of dataLines) {
+    if (!line.trim()) continue;
+
+    // Handle CSV with quoted fields
+    const fields: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    for (const char of line) {
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        fields.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    fields.push(current.trim());
+
+    if (fields.length < 3) continue;
+
+    // Try to parse: Date, Type, Category, Description, Amount
+    // Or: Date, Description, Amount (auto-detect type)
+    let date: string;
+    let type: 'income' | 'expense';
+    let category: string;
+    let description: string;
+    let amount: number;
+
+    if (fields.length >= 5) {
+      date = fields[0];
+      type = fields[1].toLowerCase() === 'income' ? 'income' : 'expense';
+      category = fields[2];
+      description = fields[3];
+      amount = Math.abs(parseFloat(fields[4]));
+    } else {
+      // Simplified format: Date, Description, Amount
+      date = fields[0];
+      description = fields[1];
+      const rawAmount = parseFloat(fields[2]);
+      amount = Math.abs(rawAmount);
+      type = rawAmount >= 0 ? 'income' : 'expense';
+      category = type === 'income' ? 'Salary' : 'Other';
+    }
+
+    if (isNaN(amount) || amount === 0) continue;
+
+    // Parse date - try common formats
+    let parsedDate: Date;
+    try {
+      parsedDate = parseISO(date);
+      if (isNaN(parsedDate.getTime())) {
+        parsedDate = new Date(date);
+      }
+    } catch {
+      parsedDate = new Date(date);
+    }
+
+    if (isNaN(parsedDate.getTime())) continue;
+
+    results.push({
+      amount,
+      type,
+      category: category as Transaction['category'],
+      description,
+      date: parsedDate.toISOString(),
+    });
+  }
+
+  return results;
+}

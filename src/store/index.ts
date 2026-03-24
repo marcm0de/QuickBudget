@@ -2,13 +2,14 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Transaction, Budget, RecurringBill, Currency, Category, QuickPreset } from '@/lib/types';
+import { Transaction, Budget, RecurringBill, Currency, Category, QuickPreset, SavingsGoal } from '@/lib/types';
 import { generateSeedTransactions, generateSeedRecurringBills } from '@/lib/seed';
 
 interface BudgetStore {
   transactions: Transaction[];
   budgets: Budget[];
   recurringBills: RecurringBill[];
+  savingsGoals: SavingsGoal[];
   currency: Currency;
   darkMode: boolean;
   seeded: boolean;
@@ -16,6 +17,7 @@ interface BudgetStore {
   // Transaction actions
   addTransaction: (t: Omit<Transaction, 'id'>) => void;
   deleteTransaction: (id: string) => void;
+  importTransactions: (transactions: Omit<Transaction, 'id'>[]) => void;
 
   // Budget actions
   setBudget: (category: Category, limit: number) => void;
@@ -25,6 +27,15 @@ interface BudgetStore {
   addRecurringBill: (bill: Omit<RecurringBill, 'id'>) => void;
   deleteRecurringBill: (id: string) => void;
   updateRecurringBill: (id: string, bill: Partial<RecurringBill>) => void;
+
+  // Savings goals
+  addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'createdAt'>) => void;
+  updateSavingsGoal: (id: string, updates: Partial<SavingsGoal>) => void;
+  deleteSavingsGoal: (id: string) => void;
+  contributeSavings: (id: string, amount: number) => void;
+
+  // Computed
+  getMonthlyRecurringTotal: () => number;
 
   // Settings
   setCurrency: (c: Currency) => void;
@@ -40,6 +51,7 @@ export const useBudgetStore = create<BudgetStore>()(
       transactions: [],
       budgets: [],
       recurringBills: [],
+      savingsGoals: [],
       currency: 'USD',
       darkMode: false,
       seeded: false,
@@ -55,6 +67,17 @@ export const useBudgetStore = create<BudgetStore>()(
       deleteTransaction: (id) =>
         set((state) => ({
           transactions: state.transactions.filter((t) => t.id !== id),
+        })),
+
+      importTransactions: (newTransactions) =>
+        set((state) => ({
+          transactions: [
+            ...newTransactions.map((t) => ({
+              ...t,
+              id: Math.random().toString(36).slice(2, 11),
+            })),
+            ...state.transactions,
+          ],
         })),
 
       setBudget: (category, limit) =>
@@ -93,6 +116,48 @@ export const useBudgetStore = create<BudgetStore>()(
             b.id === id ? { ...b, ...updates } : b
           ),
         })),
+
+      addSavingsGoal: (goal) =>
+        set((state) => ({
+          savingsGoals: [
+            {
+              ...goal,
+              id: Math.random().toString(36).slice(2, 11),
+              createdAt: new Date().toISOString(),
+            },
+            ...state.savingsGoals,
+          ],
+        })),
+
+      updateSavingsGoal: (id, updates) =>
+        set((state) => ({
+          savingsGoals: state.savingsGoals.map((g) =>
+            g.id === id ? { ...g, ...updates } : g
+          ),
+        })),
+
+      deleteSavingsGoal: (id) =>
+        set((state) => ({
+          savingsGoals: state.savingsGoals.filter((g) => g.id !== id),
+        })),
+
+      contributeSavings: (id, amount) =>
+        set((state) => ({
+          savingsGoals: state.savingsGoals.map((g) =>
+            g.id === id
+              ? { ...g, currentAmount: Math.min(g.currentAmount + amount, g.targetAmount) }
+              : g
+          ),
+        })),
+
+      getMonthlyRecurringTotal: () => {
+        const bills = get().recurringBills;
+        return bills.reduce((sum, bill) => {
+          if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+          if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+          return sum + bill.amount;
+        }, 0);
+      },
 
       setCurrency: (currency) => set({ currency }),
 

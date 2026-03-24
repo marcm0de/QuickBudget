@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, SlidersHorizontal, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { Search, SlidersHorizontal, Plus, Upload } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useBudgetStore } from '@/store';
 import { ALL_CATEGORIES, Category, CATEGORY_COLORS } from '@/lib/types';
