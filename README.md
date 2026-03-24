@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 QuickBudget
 
-## Getting Started
+A minimal, privacy-first personal budget tracker that runs entirely in your browser. No account needed — your data never leaves your device.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+## ✨ Features
+
+- **Zero backend** — All data stored in localStorage
+- **No account needed** — Start tracking instantly
+- **Dashboard** — Monthly summary with income vs expenses, pie chart, bar chart
+- **Transactions** — Searchable, filterable, sortable list with swipe-to-delete
+- **Budget Limits** — Set monthly limits per category with visual progress bars
+- **Recurring Bills** — Track subscriptions, rent, and recurring expenses
+- **Analytics** — Month-over-month trends, top categories, daily averages
+- **Quick Add** — Preset buttons for common expenses (coffee, lunch, gas, groceries)
+- **CSV Export** — Download all transactions as a CSV file
+- **Dark Mode** — Toggle between light and dark themes
+- **Currency Selector** — Support for USD, EUR, GBP, CAD, AUD, JPY
+- **Mobile-first** — Designed to work great on phone browsers
+
+## 🚀 Getting Started
 
 ```bash
+# Clone the repo
+git clone https://github.com/yourusername/QuickBudget.git
+cd QuickBudget
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** TypeScript
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **State Management:** [Zustand](https://zustand-demo.pmnd.rs/) (persisted to localStorage)
+- **Charts:** [Recharts](https://recharts.org/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Date Utils:** [date-fns](https://date-fns.org/)
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── page.tsx           # Dashboard
+│   ├── transactions/      # All transactions
+│   ├── budgets/           # Budget limits
+│   ├── recurring/         # Recurring bills
+│   └── insights/          # Analytics
+├── components/
+│   ├── AddTransactionModal.tsx
+│   ├── BottomNav.tsx
+│   ├── Charts.tsx
+│   ├── Header.tsx
+│   ├── Providers.tsx
+│   └── TransactionItem.tsx
+├── lib/
+│   ├── types.ts           # TypeScript types & constants
+│   ├── utils.ts           # Utility functions
+│   └── seed.ts            # Sample data generator
+└── store/
+    └── index.ts           # Zustand store
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔒 Privacy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+QuickBudget is **100% client-side**. Your financial data:
+- Lives only in your browser's localStorage
+- Is never sent to any server
+- Is never shared with third parties
+- Can be exported as CSV anytime
 
-## Deploy on Vercel
+To clear all data, open your browser's developer tools and clear localStorage for the site.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📊 Categories
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Expenses:** Food, Transport, Entertainment, Shopping, Bills, Health, Education, Other
+
+**Income:** Salary, Freelance, Investment, Other
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+Built with ❤️ and a desire for simpler personal finance tools.
