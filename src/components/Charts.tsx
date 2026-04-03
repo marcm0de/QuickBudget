@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, Legend } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, CartesianGrid, Legend } from 'recharts';
 import { CATEGORY_COLORS, Category } from '@/lib/types';
 
 interface PieData {
@@ -102,7 +102,17 @@ export function TrendLineChart({ data }: { data: LineData[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={data}>
+      <AreaChart data={data}>
+        <defs>
+          <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+          </linearGradient>
+        </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
         <XAxis dataKey="month" tick={{ fontSize: 11 }} tickLine={false} />
         <YAxis tick={{ fontSize: 11 }} tickLine={false} width={50} />
@@ -116,9 +126,9 @@ export function TrendLineChart({ data }: { data: LineData[] }) {
           }}
         />
         <Legend />
-        <Line type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={2} dot={{ r: 4 }} />
-        <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} dot={{ r: 4 }} />
-      </LineChart>
+        <Area type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={2} fill="url(#incomeGradient)" dot={{ r: 4 }} />
+        <Area type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} fill="url(#expenseGradient)" dot={{ r: 4 }} />
+      </AreaChart>
     </ResponsiveContainer>
   );
 }

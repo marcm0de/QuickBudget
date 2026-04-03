@@ -40,6 +40,7 @@ export interface RecurringBill {
   frequency: Frequency;
   nextDue: string; // ISO string
   category: Category;
+  type: TransactionType; // 'income' or 'expense'
 }
 
 export interface QuickPreset {

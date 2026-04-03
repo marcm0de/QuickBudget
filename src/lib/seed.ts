@@ -55,10 +55,12 @@ export function generateSeedTransactions(): Transaction[] {
 export function generateSeedRecurringBills(): RecurringBill[] {
   const today = new Date();
   return [
-    { id: genId(), name: 'Rent', amount: 1200, frequency: 'monthly', nextDue: format(subDays(today, -6), 'yyyy-MM-dd'), category: 'Bills' },
-    { id: genId(), name: 'Netflix', amount: 15.99, frequency: 'monthly', nextDue: format(subDays(today, -25), 'yyyy-MM-dd'), category: 'Entertainment' },
-    { id: genId(), name: 'Internet', amount: 60, frequency: 'monthly', nextDue: format(subDays(today, -19), 'yyyy-MM-dd'), category: 'Bills' },
-    { id: genId(), name: 'Gym', amount: 40, frequency: 'monthly', nextDue: format(subDays(today, -29), 'yyyy-MM-dd'), category: 'Health' },
-    { id: genId(), name: 'Spotify', amount: 10.99, frequency: 'monthly', nextDue: format(subDays(today, -13), 'yyyy-MM-dd'), category: 'Entertainment' },
+    { id: genId(), name: 'Rent', amount: 1200, frequency: 'monthly', nextDue: format(subDays(today, -6), 'yyyy-MM-dd'), category: 'Bills', type: 'expense' as const },
+    { id: genId(), name: 'Netflix', amount: 15.99, frequency: 'monthly', nextDue: format(subDays(today, -25), 'yyyy-MM-dd'), category: 'Entertainment', type: 'expense' as const },
+    { id: genId(), name: 'Internet', amount: 60, frequency: 'monthly', nextDue: format(subDays(today, -19), 'yyyy-MM-dd'), category: 'Bills', type: 'expense' as const },
+    { id: genId(), name: 'Gym', amount: 40, frequency: 'monthly', nextDue: format(subDays(today, -29), 'yyyy-MM-dd'), category: 'Health', type: 'expense' as const },
+    { id: genId(), name: 'Spotify', amount: 10.99, frequency: 'monthly', nextDue: format(subDays(today, -13), 'yyyy-MM-dd'), category: 'Entertainment', type: 'expense' as const },
+    { id: genId(), name: 'Monthly Salary', amount: 4200, frequency: 'monthly', nextDue: format(subDays(today, -1), 'yyyy-MM-dd'), category: 'Salary', type: 'income' as const },
+    { id: genId(), name: 'Freelance Retainer', amount: 500, frequency: 'monthly', nextDue: format(subDays(today, -15), 'yyyy-MM-dd'), category: 'Freelance', type: 'income' as const },
   ];
 }

@@ -126,56 +126,69 @@ export default function InsightsPage() {
         <TrendLineChart data={trendData} />
       </div>
 
-      {/* Recurring Bills Monthly Impact */}
-      {recurringBills.length > 0 && (
-        <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <RefreshCw size={14} className="text-orange-500" />
-            <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200">Recurring Bills Impact</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <p className="text-xs text-stone-400">Monthly Recurring</p>
-              <p className="text-lg font-bold text-red-500">
-                {formatCurrency(
-                  recurringBills.reduce((sum, bill) => {
-                    if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
-                    if (bill.frequency === 'yearly') return sum + bill.amount / 12;
-                    return sum + bill.amount;
-                  }, 0),
-                  currency
-                )}
-              </p>
+      {/* Recurring Income & Bills */}
+      {recurringBills.length > 0 && (() => {
+        const expenseBills = recurringBills.filter(b => b.type !== 'income');
+        const incomeBills = recurringBills.filter(b => b.type === 'income');
+        const monthlyExpenses = expenseBills.reduce((sum, bill) => {
+          if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+          if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+          return sum + bill.amount;
+        }, 0);
+        const monthlyIncome = incomeBills.reduce((sum, bill) => {
+          if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+          if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+          return sum + bill.amount;
+        }, 0);
+        return (
+          <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <RefreshCw size={14} className="text-orange-500" />
+              <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200">Recurring Overview</h3>
             </div>
-            <div>
-              <p className="text-xs text-stone-400">% of Expenses</p>
-              <p className="text-lg font-bold text-stone-800 dark:text-stone-100">
-                {currentExpenses > 0
-                  ? `${Math.round(
-                      (recurringBills.reduce((sum, bill) => {
-                        if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
-                        if (bill.frequency === 'yearly') return sum + bill.amount / 12;
-                        return sum + bill.amount;
-                      }, 0) /
-                        currentExpenses) *
-                        100
-                    )}%`
-                  : '—'}
-              </p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            {recurringBills.slice(0, 5).map((bill) => (
-              <div key={bill.id} className="flex items-center justify-between text-sm">
-                <span className="text-stone-600 dark:text-stone-300">{bill.name}</span>
-                <span className="text-stone-500 dark:text-stone-400 font-medium">
-                  {formatCurrency(bill.amount, currency)}/{bill.frequency === 'monthly' ? 'mo' : bill.frequency === 'weekly' ? 'wk' : 'yr'}
-                </span>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              {monthlyIncome > 0 && (
+                <div>
+                  <p className="text-xs text-stone-400">Recurring Income</p>
+                  <p className="text-lg font-bold text-emerald-500">
+                    +{formatCurrency(monthlyIncome, currency)}
+                  </p>
+                </div>
+              )}
+              <div>
+                <p className="text-xs text-stone-400">Recurring Bills</p>
+                <p className="text-lg font-bold text-red-500">
+                  {formatCurrency(monthlyExpenses, currency)}
+                </p>
               </div>
-            ))}
+              <div>
+                <p className="text-xs text-stone-400">Net Recurring</p>
+                <p className={`text-lg font-bold ${monthlyIncome - monthlyExpenses >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                  {monthlyIncome - monthlyExpenses >= 0 ? '+' : ''}{formatCurrency(monthlyIncome - monthlyExpenses, currency)}
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {incomeBills.slice(0, 3).map((bill) => (
+                <div key={bill.id} className="flex items-center justify-between text-sm">
+                  <span className="text-stone-600 dark:text-stone-300">{bill.name}</span>
+                  <span className="text-emerald-500 font-medium">
+                    +{formatCurrency(bill.amount, currency)}/{bill.frequency === 'monthly' ? 'mo' : bill.frequency === 'weekly' ? 'wk' : 'yr'}
+                  </span>
+                </div>
+              ))}
+              {expenseBills.slice(0, 5).map((bill) => (
+                <div key={bill.id} className="flex items-center justify-between text-sm">
+                  <span className="text-stone-600 dark:text-stone-300">{bill.name}</span>
+                  <span className="text-stone-500 dark:text-stone-400 font-medium">
+                    -{formatCurrency(bill.amount, currency)}/{bill.frequency === 'monthly' ? 'mo' : bill.frequency === 'weekly' ? 'wk' : 'yr'}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Savings Goals Progress */}
       {savingsGoals.length > 0 && (

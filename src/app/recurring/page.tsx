@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Calendar, X } from 'lucide-react';
+import { Plus, Trash2, Calendar, X, TrendingUp, TrendingDown } from 'lucide-react';
 import { useBudgetStore } from '@/store';
-import { EXPENSE_CATEGORIES, Category, Frequency, CATEGORY_COLORS } from '@/lib/types';
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, Category, Frequency, TransactionType, CATEGORY_COLORS } from '@/lib/types';
 import { formatCurrency, cn } from '@/lib/utils';
 import { format, parseISO, differenceInDays } from 'date-fns';
 
@@ -16,6 +16,7 @@ export default function RecurringPage() {
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [category, setCategory] = useState<Category>('Bills');
   const [nextDue, setNextDue] = useState(new Date().toISOString().split('T')[0]);
+  const [billType, setBillType] = useState<TransactionType>('expense');
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +27,7 @@ export default function RecurringPage() {
       frequency,
       category,
       nextDue,
+      type: billType,
     });
     resetForm();
   }
@@ -35,11 +37,21 @@ export default function RecurringPage() {
     setAmount('');
     setFrequency('monthly');
     setCategory('Bills');
+    setBillType('expense');
     setNextDue(new Date().toISOString().split('T')[0]);
     setShowForm(false);
   }
 
-  const monthlyTotal = recurringBills.reduce((sum, bill) => {
+  const expenseBills = recurringBills.filter(b => b.type !== 'income');
+  const incomeBills = recurringBills.filter(b => b.type === 'income');
+
+  const monthlyTotal = expenseBills.reduce((sum, bill) => {
+    if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+    if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+    return sum + bill.amount;
+  }, 0);
+
+  const monthlyIncomeTotal = incomeBills.reduce((sum, bill) => {
     if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
     if (bill.frequency === 'yearly') return sum + bill.amount / 12;
     return sum + bill.amount;
@@ -49,10 +61,13 @@ export default function RecurringPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100">Recurring Bills</h2>
-          <p className="text-sm text-stone-400 dark:text-stone-500">
-            Monthly total: <span className="font-semibold text-red-500">{formatCurrency(monthlyTotal, currency)}</span>
-          </p>
+          <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100">Recurring</h2>
+          <div className="flex gap-3 text-sm text-stone-400 dark:text-stone-500">
+            <span>Bills: <span className="font-semibold text-red-500">{formatCurrency(monthlyTotal, currency)}</span>/mo</span>
+            {monthlyIncomeTotal > 0 && (
+              <span>Income: <span className="font-semibold text-emerald-500">{formatCurrency(monthlyIncomeTotal, currency)}</span>/mo</span>
+            )}
+          </div>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -72,11 +87,38 @@ export default function RecurringPage() {
             onSubmit={handleAdd}
             className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm space-y-3 overflow-hidden"
           >
+            {/* Type toggle */}
+            <div className="flex gap-2 p-1 bg-stone-100 dark:bg-stone-800 rounded-xl">
+              <button
+                type="button"
+                onClick={() => { setBillType('expense'); setCategory('Bills'); }}
+                className={cn(
+                  'flex-1 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5',
+                  billType === 'expense'
+                    ? 'bg-red-500 text-white shadow-sm'
+                    : 'text-stone-500 dark:text-stone-400'
+                )}
+              >
+                <TrendingDown size={14} /> Expense
+              </button>
+              <button
+                type="button"
+                onClick={() => { setBillType('income'); setCategory('Salary'); }}
+                className={cn(
+                  'flex-1 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5',
+                  billType === 'income'
+                    ? 'bg-emerald-500 text-white shadow-sm'
+                    : 'text-stone-500 dark:text-stone-400'
+                )}
+              >
+                <TrendingUp size={14} /> Income
+              </button>
+            </div>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Bill name (e.g. Netflix)"
+              placeholder={billType === 'income' ? 'Income name (e.g. Salary)' : 'Bill name (e.g. Netflix)'}
               className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl text-sm border-0 outline-none text-stone-800 dark:text-stone-100 placeholder:text-stone-400"
               required
             />
@@ -111,7 +153,7 @@ export default function RecurringPage() {
               onChange={(e) => setCategory(e.target.value as Category)}
               className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl text-sm border-0 outline-none text-stone-800 dark:text-stone-100"
             >
-              {EXPENSE_CATEGORIES.map((c) => (
+              {(billType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
@@ -123,9 +165,12 @@ export default function RecurringPage() {
             />
             <button
               type="submit"
-              className="w-full py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition-colors"
+              className={cn(
+                'w-full py-2.5 text-white rounded-xl text-sm font-semibold transition-colors',
+                billType === 'income' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-red-500 hover:bg-red-600'
+              )}
             >
-              Add Recurring Bill
+              Add Recurring {billType === 'income' ? 'Income' : 'Bill'}
             </button>
           </motion.form>
         )}
@@ -168,8 +213,11 @@ export default function RecurringPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="text-sm font-semibold text-red-500 dark:text-red-400">
-                          {formatCurrency(bill.amount, currency)}
+                        <p className={cn(
+                          'text-sm font-semibold',
+                          bill.type === 'income' ? 'text-emerald-500 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'
+                        )}>
+                          {bill.type === 'income' ? '+' : '-'}{formatCurrency(bill.amount, currency)}
                         </p>
                         <div className="flex items-center gap-1 text-xs">
                           <Calendar size={10} />

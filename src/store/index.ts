@@ -28,6 +28,9 @@ interface BudgetStore {
   deleteRecurringBill: (id: string) => void;
   updateRecurringBill: (id: string, bill: Partial<RecurringBill>) => void;
 
+  // Recurring income actions
+  getMonthlyRecurringIncome: () => number;
+
   // Savings goals
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'createdAt'>) => void;
   updateSavingsGoal: (id: string, updates: Partial<SavingsGoal>) => void;
@@ -151,7 +154,16 @@ export const useBudgetStore = create<BudgetStore>()(
         })),
 
       getMonthlyRecurringTotal: () => {
-        const bills = get().recurringBills;
+        const bills = get().recurringBills.filter(b => b.type !== 'income');
+        return bills.reduce((sum, bill) => {
+          if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
+          if (bill.frequency === 'yearly') return sum + bill.amount / 12;
+          return sum + bill.amount;
+        }, 0);
+      },
+
+      getMonthlyRecurringIncome: () => {
+        const bills = get().recurringBills.filter(b => b.type === 'income');
         return bills.reduce((sum, bill) => {
           if (bill.frequency === 'weekly') return sum + bill.amount * 4.33;
           if (bill.frequency === 'yearly') return sum + bill.amount / 12;
