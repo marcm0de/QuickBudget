@@ -85,10 +85,11 @@ export default function AddTransactionModal({ open, onClose }: Props) {
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-lg bg-white dark:bg-stone-900 rounded-t-2xl sm:rounded-2xl p-6 max-h-[85vh] overflow-y-auto"
+            style={{ boxShadow: '0 -4px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)' }}
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-stone-800 dark:text-stone-100">Add Transaction</h2>
-              <button onClick={resetAndClose} className="p-1 text-stone-400 hover:text-stone-600">
+              <button onClick={resetAndClose} className="p-1.5 rounded-lg text-stone-400 hover:text-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -145,7 +146,7 @@ export default function AddTransactionModal({ open, onClose }: Props) {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full text-3xl font-bold text-center py-3 bg-stone-50 dark:bg-stone-800 rounded-xl border-0 outline-none text-stone-800 dark:text-stone-100 placeholder:text-stone-300 dark:placeholder:text-stone-600"
+                  className="w-full text-3xl font-bold text-center py-4 bg-stone-50 dark:bg-stone-800 rounded-xl border-2 border-transparent outline-none text-stone-800 dark:text-stone-100 placeholder:text-stone-300 dark:placeholder:text-stone-600 focus:border-stone-200 dark:focus:border-stone-700 transition-colors"
                   autoFocus
                   required
                 />
@@ -182,7 +183,7 @@ export default function AddTransactionModal({ open, onClose }: Props) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="What was this for?"
-                  className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl border-0 outline-none text-stone-800 dark:text-stone-100 placeholder:text-stone-400 text-sm"
+                  className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl border-2 border-transparent outline-none text-stone-800 dark:text-stone-100 placeholder:text-stone-400 text-sm focus:border-stone-200 dark:focus:border-stone-700 transition-colors"
                 />
               </div>
 
@@ -193,17 +194,17 @@ export default function AddTransactionModal({ open, onClose }: Props) {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl border-0 outline-none text-stone-800 dark:text-stone-100 text-sm"
+                  className="w-full py-2.5 px-3 bg-stone-50 dark:bg-stone-800 rounded-xl border-2 border-transparent outline-none text-stone-800 dark:text-stone-100 text-sm focus:border-stone-200 dark:focus:border-stone-700 transition-colors"
                 />
               </div>
 
               <button
                 type="submit"
                 className={cn(
-                  'w-full py-3 rounded-xl text-white font-semibold text-sm transition-all',
+                  'w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-all active:scale-[0.98]',
                   type === 'expense'
-                    ? 'bg-red-500 hover:bg-red-600'
-                    : 'bg-emerald-500 hover:bg-emerald-600'
+                    ? 'bg-red-500 hover:bg-red-600 shadow-md shadow-red-500/20'
+                    : 'bg-emerald-500 hover:bg-emerald-600 shadow-md shadow-emerald-500/20'
                 )}
               >
                 Add {type === 'expense' ? 'Expense' : 'Income'}

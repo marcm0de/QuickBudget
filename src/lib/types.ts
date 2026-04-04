@@ -84,15 +84,15 @@ export const CURRENCY_SYMBOLS: Record<Currency, string> = {
 };
 
 export const CATEGORY_COLORS: Record<Category, string> = {
-  Food: '#f97316',
-  Transport: '#3b82f6',
-  Entertainment: '#a855f7',
-  Shopping: '#ec4899',
-  Bills: '#ef4444',
-  Health: '#10b981',
-  Education: '#6366f1',
-  Other: '#6b7280',
-  Salary: '#22c55e',
-  Freelance: '#14b8a6',
-  Investment: '#eab308',
+  Food: '#fb923c',
+  Transport: '#60a5fa',
+  Entertainment: '#c084fc',
+  Shopping: '#f472b6',
+  Bills: '#f87171',
+  Health: '#34d399',
+  Education: '#818cf8',
+  Other: '#94a3b8',
+  Salary: '#4ade80',
+  Freelance: '#2dd4bf',
+  Investment: '#fbbf24',
 };

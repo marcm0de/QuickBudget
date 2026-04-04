@@ -35,10 +35,11 @@ export function SpendingPieChart({ data }: { data: PieData[] }) {
           data={data}
           cx="50%"
           cy="50%"
-          innerRadius={50}
-          outerRadius={80}
-          paddingAngle={3}
+          innerRadius={55}
+          outerRadius={85}
+          paddingAngle={4}
           dataKey="value"
+          cornerRadius={3}
         >
           {data.map((entry) => (
             <Cell
@@ -74,8 +75,14 @@ export function DailyBarChart({ data }: { data: BarData[] }) {
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data}>
-        <XAxis dataKey="day" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-        <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={40} />
+        <defs>
+          <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity={0.7} />
+          </linearGradient>
+        </defs>
+        <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#a8a29e' }} tickLine={false} axisLine={false} />
+        <YAxis tick={{ fontSize: 10, fill: '#a8a29e' }} tickLine={false} axisLine={false} width={40} />
         <Tooltip
           formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Spent']}
           contentStyle={{
@@ -85,7 +92,7 @@ export function DailyBarChart({ data }: { data: BarData[] }) {
             fontSize: '12px',
           }}
         />
-        <Bar dataKey="amount" fill="#ef4444" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="amount" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -113,7 +120,7 @@ export function TrendLineChart({ data }: { data: LineData[] }) {
             <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
         <XAxis dataKey="month" tick={{ fontSize: 11 }} tickLine={false} />
         <YAxis tick={{ fontSize: 11 }} tickLine={false} width={50} />
         <Tooltip
@@ -126,8 +133,8 @@ export function TrendLineChart({ data }: { data: LineData[] }) {
           }}
         />
         <Legend />
-        <Area type="monotone" dataKey="income" stroke="#22c55e" strokeWidth={2} fill="url(#incomeGradient)" dot={{ r: 4 }} />
-        <Area type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} fill="url(#expenseGradient)" dot={{ r: 4 }} />
+        <Area type="monotone" dataKey="income" stroke="#4ade80" strokeWidth={2.5} fill="url(#incomeGradient)" dot={{ r: 3, fill: '#4ade80', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#4ade80', stroke: '#fff', strokeWidth: 2 }} />
+        <Area type="monotone" dataKey="expenses" stroke="#f87171" strokeWidth={2.5} fill="url(#expenseGradient)" dot={{ r: 3, fill: '#f87171', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#f87171', stroke: '#fff', strokeWidth: 2 }} />
       </AreaChart>
     </ResponsiveContainer>
   );

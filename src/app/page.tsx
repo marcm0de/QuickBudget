@@ -74,8 +74,10 @@ export default function Dashboard() {
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-3">
         <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm"
+          whileHover={{ scale: 1.02, y: -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="bg-white dark:bg-stone-900 rounded-2xl p-4"
+          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
         >
           <div className="flex items-center gap-1.5 mb-1">
             <TrendingUp size={14} className="text-emerald-500" />
@@ -87,8 +89,10 @@ export default function Dashboard() {
         </motion.div>
 
         <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm"
+          whileHover={{ scale: 1.02, y: -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="bg-white dark:bg-stone-900 rounded-2xl p-4"
+          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
         >
           <div className="flex items-center gap-1.5 mb-1">
             <TrendingDown size={14} className="text-red-500" />
@@ -100,8 +104,10 @@ export default function Dashboard() {
         </motion.div>
 
         <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm"
+          whileHover={{ scale: 1.02, y: -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="bg-white dark:bg-stone-900 rounded-2xl p-4"
+          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
         >
           <div className="flex items-center gap-1.5 mb-1">
             <Wallet size={14} className="text-blue-500" />
@@ -114,7 +120,7 @@ export default function Dashboard() {
       </div>
 
       {/* Spending by category */}
-      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04)' }}>
         <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200 mb-2">Spending by Category</h3>
         <SpendingPieChart data={pieData} />
         <div className="flex flex-wrap gap-2 mt-3">
@@ -131,13 +137,13 @@ export default function Dashboard() {
       </div>
 
       {/* Daily spending */}
-      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04)' }}>
         <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200 mb-2">Daily Spending</h3>
         <DailyBarChart data={dailyData} />
       </div>
 
       {/* Recent transactions */}
-      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4 shadow-sm">
+      <div className="bg-white dark:bg-stone-900 rounded-2xl p-4" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04)' }}>
         <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-200 mb-2">Recent Transactions</h3>
         <div className="divide-y divide-stone-100 dark:divide-stone-800">
           {recentTxns.length === 0 ? (
